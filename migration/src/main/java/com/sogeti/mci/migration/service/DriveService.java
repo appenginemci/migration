@@ -51,7 +51,7 @@ public class DriveService
     	return set;
     }
     
-    public static HashMap<Label, String> createFolders(Set<Label> set, Event event) {
+    public static HashMap<Label, String> createFolders(Set<Label> set) {
     	HashMap<Label,String> map = new HashMap<Label,String>();
     	for (Label elt : set) {
 			String[] folders = elt.getName().split("/");
@@ -122,12 +122,8 @@ public class DriveService
 		System.out.println("Storing attachment file " + name + " in folder "
 				+ multipleFormatEmail.getNameEmail());
 
-//		File mciFolder = getRecipientFolderById(multipleFormatEmail.getEvent().getAttachmentsFolderId());
-
-//		mciFolder = DriveAPI.createFolder(drive, multipleFormatEmail.getNameEmail(), mciFolder.getId());
-
 		return doAttachementInsertion(baos, name, description, mimetypeBody, mimetypeFile,
-				extension, MailManagerService.getAttachmentFolderId());
+				extension, multipleFormatEmail.getEvent().getAttachmentsFolderId());
 	}
 	
 	private static File doAttachementInsertion(ByteArrayOutputStream baos, String name,

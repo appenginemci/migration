@@ -28,7 +28,8 @@ public class EventService {
 			Group group = DirectoryService.insertGroup(eventName, mailbox);
 			event.setGroupId(group!=null?group.getId():null);
 			event.setEventFolderId(eventFolder.getId());
-			event.setAttachmentsFolderId(eventFolder.getId());
+			File attachmentFolder = DriveService.createFolder("U-Attachments", eventFolder.getId());
+			event.setAttachmentsFolderId(attachmentFolder!=null?attachmentFolder.getId():eventFolder.getId());
 			event.setClosedFolderId(eventFolder.getId());
 			event.setMail(mailbox);
 			event.setNewFolderId(eventFolder.getId());	

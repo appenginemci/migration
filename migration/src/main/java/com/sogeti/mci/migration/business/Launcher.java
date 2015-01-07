@@ -1,6 +1,7 @@
 package com.sogeti.mci.migration.business;
 
 import java.io.InputStream;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class Launcher {
 	private static final String EVENT_NAME = "EventMigration";
 	private static final String SITE =  "MCH-Events";
 	private static final String TEMPORARY_EVENT_MAILBOX = "mimoun.chikhi@demo.sogeti-reseller.com";
-	private static final String EVENT_TYPE = "Unstructured";
+	private static final String EVENT_TYPE = "Unstructured0";
 	private static final String LEADER_NAME = "mimoun.chikhi@demo.sogeti-reseller.com";
 	private static final String[] TEAM_MEMBERS = {"toto.toto@demo.sogeti-reseller.com","mci.project@demo.sogeti-reseller.com"};
 	
@@ -39,6 +40,7 @@ public class Launcher {
 	private static Drive drive;
 	private static Directory directory;
 	
+	
 	public static void main (String args[]) {
 
 		setDrive(CredentialLoader.getDriveService(TECHNICAL_ACCOUNT));
@@ -46,13 +48,21 @@ public class Launcher {
 
 		loadLicense();
 		long startTime = System.nanoTime();
-		one();
+		
+		if (EVENT_TYPE.equals("Unstructured")) {
+			setUpUnstructuredEvent();
+		}
+		HashMap<Label, String> map = pairLabelsToFolders();
+		if (map!=null && !map.isEmpty()) {
+			migrate(map);
+		}
+		
 		long endTime = System.nanoTime();
 		System.out.println("DURATION (s): "+(endTime - startTime)/1000000000);
     	
 	}
 
-	private static void one() {
+	private static void setUpUnstructuredEvent() {
 		
 		//******************************************************************************************//
 		//									INIT													//
@@ -91,13 +101,20 @@ public class Launcher {
 				DriveService.shareFolderWithMember(eventFolder.getId(), member);
 			}			
 		}	
-		
+		 
+	}
+
+	private static HashMap<Label, String> pairLabelsToFolders() {
 		//******************************************************************************************//
 		//								FOLDER CREATION												//
 		//******************************************************************************************//		
 
     	Set<Label> folderSet = DriveService.getFoldersByEvent(TEMPORARY_EVENT_MAILBOX, SITE+"/"+EVENT_NAME);
-    	HashMap<Label, String> map = DriveService.createFolders(folderSet, event);
+    	HashMap<Label, String> map = DriveService.createFolders(folderSet);  
+    	return map;
+	}
+	
+	private static void migrate(AbstractMap<Label, String> map) {	
     	long total = 0;
     	for (Label label : map.keySet()) {
 			try {

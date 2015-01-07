@@ -3,7 +3,6 @@ package com.sogeti.mci.migration.service;
 import java.util.List;
 
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.Message;
@@ -19,7 +18,6 @@ public class MailManagerService {
 	public static final String LABEL = "Converted";
 	
 	private static String folderId;
-	private static String attachmentFolderId;
 	private static Gmail gmail;
 	
 	public static long doJob(String userId, Label label, String folderId) throws Exception {
@@ -35,11 +33,6 @@ public class MailManagerService {
 		if (threads.size() == 0) {
 			System.err.println("No message in "+label.getName());
 		} else {
-			File att = DriveAPI.getFolder(Launcher.getDrive(), "attachments", folderId);
-			if (att==null) {
-				att = DriveAPI.createFolder(Launcher.getDrive(), "attachments", folderId);
-			}
-			setAttachmentFolderId(att.getId());
 			for (com.google.api.services.gmail.model.Thread thread : threads) {
 
 				Message message = GmailAPI.getLastMessageFromThread(gmail, userId, thread);
@@ -96,14 +89,6 @@ public class MailManagerService {
 
 	public static void setFolderId(String folderId) {
 		MailManagerService.folderId = folderId;
-	}
-
-	public static String getAttachmentFolderId() {
-		return attachmentFolderId;
-	}
-
-	public static void setAttachmentFolderId(String attachmentFolderId) {
-		MailManagerService.attachmentFolderId = attachmentFolderId;
 	}
 
 	public static Gmail getGmail() {
