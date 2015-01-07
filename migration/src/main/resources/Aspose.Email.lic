@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<License>
+  <Data>
+    <LicensedTo>sogeti</LicensedTo>
+    <EmailTo>mimoun.chikhi@capgemini-sogeti.com</EmailTo>
+    <LicenseType>Developer Small Business</LicenseType>
+    <LicenseNote>Limited to 1 developer.</LicenseNote>
+    <OrderID>141015070000</OrderID>
+    <UserID>275034</UserID>
+    <OEM>This is not a redistributable license</OEM>
+    <Products>
+      <Product>Aspose.Email for Java</Product>
+    </Products>
+    <EditionType>Enterprise</EditionType>
+    <SerialNumber>28215cef-3682-4042-b02b-d3be0233b4fc</SerialNumber>
+    <SubscriptionExpiry>20151015</SubscriptionExpiry>
+    <LicenseExpiry>20141114</LicenseExpiry>
+    <ExpiryNote>This is a temporary license for non-commercial use only and it will expire on 2014-11-14.</ExpiryNote>
+    <LicenseVersion>3.0</LicenseVersion>
+    <LicenseInstructions>http://www.aspose.com/corporate/purchase/license-instructions.aspx</LicenseInstructions>
+  </Data>
+  <Signature>qWyItl1xxN7DnO1uKw5P6USpDEqPbKBaKkLpTZ69T9+9pLlNKhF7QEd73T+iDnTc1mf6/abr3DboaFH6joVqoYdSnrNZedfx37ow0CRVSNBbntgWLQn48RR/tOyYajOZGAhGrF8dJbv9/T4MYP6rBqNefYJE1JqwgqGmYWxshKI=</Signature>
+</License>
