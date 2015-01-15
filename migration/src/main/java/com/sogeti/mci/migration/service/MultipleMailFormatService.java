@@ -4,8 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,8 +24,9 @@ import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartBody;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Launcher;
+import com.sogeti.mci.migration.business.Migrator;
 import com.sogeti.mci.migration.dao.SettingsDAO;
+import com.sogeti.mci.migration.helper.PropertiesManager;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
 import com.sogeti.mci.migration.security.CredentialLoader;
 
@@ -53,7 +53,7 @@ public class MultipleMailFormatService {
 	    String name = retrieveEmailName(mimeMessage);
 	    multipleFormatMail.setNameEmail(name);
 	    
-	    multipleFormatMail.setEvent(EventService.getEventByAccount((Launcher.getEventAccount())));
+	    multipleFormatMail.setEvent(EventService.getEventByAccount((Migrator.getInput().getEventName().toLowerCase().replaceAll(" ",".")+"@"+PropertiesManager.getProperty("domain"))));
 	    	   
 	    multipleFormatMail.setDocument(DocumentService.getDocument(multipleFormatMail));
 	    if (multipleFormatMail.getDocument().getdocumentId() != null) {
@@ -80,7 +80,7 @@ public class MultipleMailFormatService {
 	    return email;
 	}
 
-	public static MultipleFormatMail constructMailWithAttachments (MultipleFormatMail multipleFormatMail, String userId) throws IOException, GeneralSecurityException, URISyntaxException {
+	public static MultipleFormatMail constructMailWithAttachments (MultipleFormatMail multipleFormatMail, String userId) throws UnsupportedEncodingException  {
 	    Message gMailMessage = multipleFormatMail.getGmailMessage();
 	    MailMessage asposeMessage = multipleFormatMail.getAsposeMessage();
 	    Gmail service = CredentialLoader.getGmailService(userId);

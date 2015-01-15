@@ -6,13 +6,13 @@ import com.google.api.services.admin.directory.model.Groups;
 import com.google.api.services.admin.directory.model.Member;
 import com.google.api.services.admin.directory.model.User;
 import com.sogeti.mci.migration.api.DirectoryAPI;
-import com.sogeti.mci.migration.business.Launcher;
+import com.sogeti.mci.migration.business.Migrator;
 import com.sogeti.mci.migration.helper.PropertiesManager;
 
 
 public class DirectoryService {
 	
-	static Directory directory = Launcher.getDirectory();
+	static Directory directory = Migrator.getDirectory();
 
 	public static Group insertGroup(String eventName, String mailbox) {
 		Group group = getGroup(mailbox);

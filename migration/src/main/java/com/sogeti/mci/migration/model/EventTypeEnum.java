@@ -2,7 +2,8 @@ package com.sogeti.mci.migration.model;
 
 public enum EventTypeEnum {
 	ABSTRACT("abstract"),
-	CONGRESS("congress");
+	CONGRESS("congress"),
+	UNSTRUCTURED("unstructured");
 	
 	private final String consumerType;
 	private EventTypeEnum(String consumerType) {

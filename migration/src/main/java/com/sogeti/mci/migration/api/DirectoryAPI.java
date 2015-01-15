@@ -2,12 +2,12 @@ package com.sogeti.mci.migration.api;
 
 import java.io.IOException;
 
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.Group;
 import com.google.api.services.admin.directory.model.Groups;
 import com.google.api.services.admin.directory.model.Member;
 import com.google.api.services.admin.directory.model.User;
+import com.sogeti.mci.migration.helper.APIException;
 
 public class DirectoryAPI {
 	
@@ -18,20 +18,10 @@ public class DirectoryAPI {
 			addedGroup.setName(groupName);
 			addedGroup.setEmail(groupEmail);
 			addedGroup = directory.groups().insert(addedGroup).execute();
-		} catch (GoogleJsonResponseException ge) {
-			if (ge.getStatusCode()==409) {
-				System.err.println("Entity already exists:"+groupEmail);
-			} else {
-				System.err.println("error while trying to add group");
-				ge.printStackTrace();
-				addedGroup = null;
-			}
+		} catch (IOException ge) {
+			APIException.handleException(ge, "Failed to create group "+groupName, 409);
 			addedGroup = null;
-		} catch (IOException e) {
-			System.err.println("error while trying to add group");
-			e.printStackTrace();
-			addedGroup = null;
-		}
+		} 
 		return addedGroup;
 	}
 	
@@ -41,8 +31,7 @@ public class DirectoryAPI {
 		try {
 			 groups = directory.groups().list().setDomain(domain).execute();
 		} catch (IOException e) {
-			System.err.println("Error while retrieving groups");
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to list group for this domain "+domain, 0);
 		}
 		return groups;
 	}
@@ -51,16 +40,8 @@ public class DirectoryAPI {
 		User user = null;
 		try {
 			 user = directory.users().get(userId).execute();
-		} catch (GoogleJsonResponseException ge) {
-			if (ge.getStatusCode()==404) {
-				System.err.println("User not found: "+userId);
-			} else {
-				System.err.println("Error while retrieving user");
-				ge.printStackTrace();
-			}
-		} catch (IOException e) {
-			System.err.println("Error while retrieving user");
-			e.printStackTrace();
+		} catch (IOException ge) {
+			APIException.handleException(ge, "Failed to get "+userId, 404);
 		}
 		return user;
 	}
@@ -70,8 +51,7 @@ public class DirectoryAPI {
 		try {
 			member = directory.members().insert(groupId, memberToAdd).execute();
 		} catch (IOException e) {
-			System.err.println("Error while inserting user");
-			e.printStackTrace();
+			APIException.handleException(e,"Error while inserting user",0);
 		}
 		return member;
 	}
@@ -80,16 +60,8 @@ public class DirectoryAPI {
 		Member member = null;
 		try {
 			member = directory.members().get(groupId, userId).execute();
-		} catch (GoogleJsonResponseException ge) {
-			if (ge.getStatusCode()==404) {
-				System.err.println("User not member for this group : "+userId);
-			} else {
-				System.err.println("Error while retrieving user");
-				ge.printStackTrace();
-			}
-		} catch (IOException e) {
-			System.err.println("Error while inserting user");
-			e.printStackTrace();
+		} catch (IOException ge) {
+			APIException.handleException(ge, "Failed to add "+userId+" to "+groupId, 404);
 		}
 		return member;
 	}

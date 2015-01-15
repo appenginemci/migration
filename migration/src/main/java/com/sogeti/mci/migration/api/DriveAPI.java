@@ -10,17 +10,15 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentList;
 import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
+import com.sogeti.mci.migration.helper.APIException;
 
 public class DriveAPI {
 	
 	public static File getFolder(Drive drive, String folderName, String parentId)  {
 
 		File toReturn = null;
-
-		Drive.Files.List request;
-		
+		Drive.Files.List request;		
 		String withOrWithoutParent = (parentId==null?"'":"' AND '" + parentId + "' in parents");
-
 		String query = "mimeType='application/vnd.google-apps.folder' AND trashed=false AND title='"
 				+ folderName + withOrWithoutParent;
 		
@@ -32,8 +30,7 @@ public class DriveAPI {
 				toReturn = files.getItems().get(0);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to get folder "+folderName, 0);
 		}
 
 		return toReturn;
@@ -49,8 +46,7 @@ public class DriveAPI {
 		try {
 			toReturn = drive.files().insert(toReturn).execute();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to create folder "+folderName, 0);
 		}
 
 		return toReturn;
@@ -61,8 +57,7 @@ public class DriveAPI {
 		try {
 			file = drive.files().get(id).execute();
 		} catch (IOException e) {
-			// TODO LOG IN DB
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to get file "+id, 0);
 		}
 		return file;
 	}
@@ -74,20 +69,19 @@ public class DriveAPI {
 			drive.files().delete(id).execute();
 			deleteOk = true;
 		} catch (IOException e) {
-			// TODO LOG IN DB
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to delete file "+id, 0);
 		}
 		return deleteOk;
 	}
 	
 	public static File copyFile(Drive service, String originFileId,
 			File copy) {
-		    try {
-		      return service.files().copy(originFileId, copy).execute();
-		    } catch (IOException e) {
-		      System.out.println("An error occurred: " + e);e.printStackTrace();
-		    }
-		    return null;
+	    try {
+	      return service.files().copy(originFileId, copy).execute();
+	    } catch (IOException e) {
+	    	APIException.handleException(e, "Failed to copy file "+originFileId, 0);
+	    }
+	    return null;
 	 }
 	
 	public static String getParentFolderId(Drive service, String fileId) {
@@ -96,11 +90,10 @@ public class DriveAPI {
 	      ParentList parents = service.parents().list(fileId).execute();
 
 	      for (ParentReference parent : parents.getItems()) {
-	        //System.out.println("File Id: " + parent.getId());
 	        folderId = parent.getId();
 	      }
 	    } catch (IOException e) {
-	      System.out.println("An error occurred: " + e);
+	    	APIException.handleException(e, "Failed to getParentFolderId for file "+fileId, 0);
 	    }
 	    return folderId;
 	}
@@ -109,15 +102,12 @@ public class DriveAPI {
 	    try {
 	      // First retrieve the file from the API.
 	      File file = service.files().get(fileId).execute();
-	      file.getLabels().setViewed(false);
-	      
+	      file.getLabels().setViewed(false);	      
 	      // Send the request to the API.
-	      File updatedFile = service.files().update(fileId, file, mediaContent).execute();
-	      
-	      
+	      File updatedFile = service.files().update(fileId, file, mediaContent).execute();	      
 	      return updatedFile;
 	    } catch (IOException e) {
-	      System.out.println("An error occurred: " + e);
+	    	APIException.handleException(e, "Failed to update file "+fileId, 0);
 	      return null;
 	    }
 	}
@@ -127,8 +117,7 @@ public class DriveAPI {
 		try {
 			file = drive.files().insert(body, mediaContent).execute();
 		} catch (IOException e) {
-			// TODO LOG IN DB
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to insert file ", 0);
 		}
 		return file;
 	}
@@ -138,8 +127,7 @@ public class DriveAPI {
 		try {
 			p = drive.permissions().insert(eventFolderId, newPermission).setSendNotificationEmails(true).execute();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			APIException.handleException(e, "Failed to add permission ", 0);
 		}
 		return p;
 	}

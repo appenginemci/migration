@@ -19,10 +19,8 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.sogeti.mci.migration.api.DriveAPI;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Launcher;
+import com.sogeti.mci.migration.business.Migrator;
 import com.sogeti.mci.migration.dao.SettingsDAO;
-import com.sogeti.mci.migration.helper.PropertiesManager;
-import com.sogeti.mci.migration.model.Event;
 import com.sogeti.mci.migration.model.Member;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
 import com.sogeti.mci.migration.security.CredentialLoader;
@@ -30,7 +28,7 @@ import com.sogeti.mci.migration.security.CredentialLoader;
 
 public class DriveService 
 {    
-	static Drive drive = Launcher.getDrive();
+	static Drive drive = Migrator.getDrive();
  
 	public static File getFolder(String emailId, String name, String parentFolderId) {
 		File file = DriveAPI.getFolder(drive, name, parentFolderId);
@@ -59,8 +57,10 @@ public class DriveService
 			for (int i = 0; i < folders.length; i++) {
 				String folderName= folders[i];
 		    	File file = createFolder(folderName, parentFolderId);
-		    	parentFolderId = file.getId();	
-		    	map.put(elt, parentFolderId);
+		    	if (file!=null) {
+			    	parentFolderId = file.getId();	
+			    	map.put(elt, parentFolderId);
+		    	}
 			}			
 		}
     	return map;
@@ -129,6 +129,10 @@ public class DriveService
 	private static File doAttachementInsertion(ByteArrayOutputStream baos, String name,
 			String description, String mimetypeBody, String mimetypeFile,
 			String extension, String folderId)  {
+		if (folderId==null) {
+			// If no attachement drive is defined, store attachment near the doc
+			folderId = MailManagerService.getFolderId();
+		}
 		File body = createGoogleFile(name, description, mimetypeBody, folderId);
 				
 		ByteArrayContent mediaContent = new ByteArrayContent(mimetypeFile,	baos.toByteArray());
@@ -139,15 +143,15 @@ public class DriveService
 	}	
 	
 	public static Permission shareFolderWithMember(String eventFolderId, Member member) {
-		String adminUser = PropertiesManager.getProperty("admin_user");
+		//String adminUser = PropertiesManager.getProperty("admin_user");
 		Permission newPermission = null;
-		if (!adminUser.equals(member.getUserId())) {
+		//if (!adminUser.equals(member.getUserId())) {
 			newPermission = new Permission();
 			newPermission.setValue(member.getUserId());
 			newPermission.setType("user");
 			newPermission.setRole("writer");
 			newPermission = DriveAPI.addPermission(drive, eventFolderId, newPermission);
-		}
+		//}
 		return newPermission;
 	}
 

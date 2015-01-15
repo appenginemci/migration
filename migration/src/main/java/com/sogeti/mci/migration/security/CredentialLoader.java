@@ -9,6 +9,8 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -30,7 +32,7 @@ public class CredentialLoader {
 			GoogleCredentialItem googleCredentialItem = generateGoogleCredentialItem(getScopes(), userId);
 			if(googleCredentialItem != null){
 				service = new Gmail.Builder(googleCredentialItem.getHttpTransport(), googleCredentialItem.getJsonFactory(), null)
-			      .setHttpRequestInitializer(googleCredentialItem.getGoogleCredential()).setApplicationName("MCI").build();
+			      .setHttpRequestInitializer(setHttpTimeout(googleCredentialItem.getGoogleCredential())).setApplicationName("MCI").build();
 			}				  
 		    return service;
 		}
@@ -40,7 +42,7 @@ public class CredentialLoader {
 			GoogleCredentialItem googleCredentialItem = generateGoogleCredentialItem(getScopes(), userId);
 			if(googleCredentialItem != null){
 				service = new Drive.Builder(googleCredentialItem.getHttpTransport(), googleCredentialItem.getJsonFactory(), null)
-			      .setHttpRequestInitializer(googleCredentialItem.getGoogleCredential()).setApplicationName("MCI").build();
+			      .setHttpRequestInitializer(setHttpTimeout(googleCredentialItem.getGoogleCredential())).setApplicationName("MCI").build();
 			}				  
 		    return service;
 		}
@@ -121,6 +123,17 @@ public class CredentialLoader {
 			scopes.add(DirectoryScopes.ADMIN_DIRECTORY_GROUP);
 			scopes.add(GroupssettingsScopes.APPS_GROUPS_SETTINGS);
 			return scopes;
+		}
+		
+		private static HttpRequestInitializer setHttpTimeout(final HttpRequestInitializer requestInitializer) {
+			  return new HttpRequestInitializer() {
+			    @Override
+			    public void initialize(HttpRequest httpRequest) throws IOException {
+			      requestInitializer.initialize(httpRequest);
+			      httpRequest.setConnectTimeout(5 * 60000);  // 3 minutes connect timeout
+			      httpRequest.setReadTimeout(5 * 60000);  // 3 minutes read timeout
+			    }
+			  };
 		}
 		
 }

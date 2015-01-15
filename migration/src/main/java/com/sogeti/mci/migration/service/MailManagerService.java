@@ -8,7 +8,7 @@ import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.Message;
 import com.sogeti.mci.migration.api.DriveAPI;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Launcher;
+import com.sogeti.mci.migration.business.Migrator;
 import com.sogeti.mci.migration.model.Document;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
 import com.sogeti.mci.migration.security.CredentialLoader;
@@ -28,11 +28,12 @@ public class MailManagerService {
 		
 		setFolderId(folderId);
 
-		List<com.google.api.services.gmail.model.Thread> threads = GmailAPI.listThreadsMatchingQuery(gmail, userId, "label:"+label.getName()+" -label:"+LABEL);
+		List<com.google.api.services.gmail.model.Thread> threads = GmailAPI.listThreadsMatchingQuery(gmail, userId, "label:\""+label.getName()+"\" -label:"+LABEL);
 
 		if (threads.size() == 0) {
 			System.err.println("No message in "+label.getName());
 		} else {
+			System.out.println(threads.size()+" messages in "+label.getName());
 			for (com.google.api.services.gmail.model.Thread thread : threads) {
 
 				Message message = GmailAPI.getLastMessageFromThread(gmail, userId, thread);
@@ -54,7 +55,7 @@ public class MailManagerService {
 							System.err.println("Failed to labelize message");
 						}
 					} else {
-						if (!deleteFiles(Launcher.getDrive(), multipleFormatMail.getDocument())) {
+						if (!deleteFiles(Migrator.getDrive(), multipleFormatMail.getDocument())) {
 							System.err.println("Failed to delete corrupted files");
 							// TODO LOG IN DB
 						}
