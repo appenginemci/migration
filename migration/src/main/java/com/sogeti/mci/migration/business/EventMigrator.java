@@ -15,7 +15,7 @@ import com.sogeti.mci.migration.security.CredentialLoader;
 import com.sogeti.mci.migration.service.DriveService;
 import com.sogeti.mci.migration.service.MailManagerService;
 
-public class Migrator {
+public class EventMigrator {
 	
 	// Inputs depending on environment
 	static final String APPLICATION_ACCOUNT = PropertiesManager.getProperty("user.email");
@@ -33,9 +33,9 @@ public class Migrator {
 		
 		input = Validater.validateInput(args);
 		if (input!=null) {
-			System.out.println("\n---------- STARTING MIGRATION -------------------"+input.getEventName());
+			System.out.println("\n---------- STARTING MIGRATION ------------------- "+input.getEventName());
 			treatEvent();	
-			System.out.println("---------- STOPING MIGRATION -------------------"+input.getEventName()+"\n");
+			System.out.println("---------- STOPING MIGRATION ------------------- "+input.getEventName()+"\n");
 		} else {
 			System.out.println("Invalid input");
 		}
@@ -70,8 +70,8 @@ public class Migrator {
 		//								FOLDER CREATION												//
 		//******************************************************************************************//		
 
-    	Set<Label> folderSet = DriveService.getFoldersByEvent(input.getTemporaryEventMailbox(), input.getSite()+"/"+input.getEventName());
-    	HashMap<Label, String> map = DriveService.createFolders(folderSet);  
+    	Set<Label> folderSet = DriveService.getFoldersByEvent(input.getTemporaryEventMailbox(), "Inbox/");//);
+    	HashMap<Label, String> map = DriveService.createFolders(folderSet,input.getSite(),input.getEventName(),"Inbox");  
     	return map;
 	}
 	
@@ -109,7 +109,7 @@ public class Migrator {
 	}
 
 	public static void setDrive(Drive drive) {
-		Migrator.drive = drive;
+		EventMigrator.drive = drive;
 	}
 
 	public static Directory getDirectory() {
@@ -117,7 +117,7 @@ public class Migrator {
 	}
 
 	public static void setDirectory(Directory directory) {
-		Migrator.directory = directory;
+		EventMigrator.directory = directory;
 	}
 
 	public static Input getInput() {

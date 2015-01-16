@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
-import com.sogeti.mci.migration.helper.PropertiesManager;
 import com.sogeti.mci.migration.helper.Validater;
 import com.sogeti.mci.migration.model.Event;
 import com.sogeti.mci.migration.model.EventTypeEnum;
@@ -20,14 +19,14 @@ import com.sogeti.mci.migration.service.EventService;
 import com.sogeti.mci.migration.service.MemberService;
 import com.sogeti.mci.migration.service.SiteService;
 
-public class FolderCreator {
+public class EventCreator {
 
 	public static void main(String args[]) {
 		
       String csvFilename = "events.csv";
       csvFilename = "."+java.io.File.separator+"src"+java.io.File.separator+"main"+java.io.File.separator+"resources"+java.io.File.separator+csvFilename;
-	  Migrator.setDrive(CredentialLoader.getDriveService(Migrator.APPLICATION_ACCOUNT));
-	  Migrator.setDirectory(CredentialLoader.getDirectoryService(Migrator.APPLICATION_ACCOUNT));    
+	  EventMigrator.setDrive(CredentialLoader.getDriveService(EventMigrator.APPLICATION_ACCOUNT));
+	  EventMigrator.setDirectory(CredentialLoader.getDirectoryService(EventMigrator.APPLICATION_ACCOUNT));    
 	  List<Input> inputs = CsvService.getEvents(csvFilename);
 		
 		for (Input input : inputs) {
@@ -48,6 +47,7 @@ public class FolderCreator {
 		//									INIT													//
 		// Caution : The folders'id (event and event member) must be filled after the process		//
 		// The authorization has been partially handled, access granted to root event for users		//
+		// Create the alias too
 		//******************************************************************************************//
 		System.out.println("\n---------- STARTING CREATION -------------------");
 		// Create the site folder in Drive and get the file
@@ -69,7 +69,7 @@ public class FolderCreator {
 				} else {
 					System.out.println("Successfully created site in DB : "+input.getSite());
 					// Create the event in DB and get the obj
-					Event event = EventService.insertEvent(input.getEventName(), input.getEventName().toLowerCase().replaceAll(" ",".")+"@"+PropertiesManager.getProperty("domain"), input.getEventType(), site, eventFolder);
+					Event event = EventService.insertEvent(input.getEventName(), input.getEventEmailAddress(), input.getEventType(), site, eventFolder);
 					if (event==null) {
 						System.out.println("Failed to create event in DB : "+input.getEventName());
 					} else {
@@ -113,6 +113,8 @@ public class FolderCreator {
 								System.out.println("Failed to create member : "+input.getLeaderName());
 							}			
 						}
+						// Create the alias
+						//DirectoryService.addAlias(EventMigrator.APPLICATION_ACCOUNT, input.getEventEmailAddress());
 					}
 				}
 			}

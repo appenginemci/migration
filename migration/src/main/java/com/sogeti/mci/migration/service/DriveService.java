@@ -19,7 +19,7 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.sogeti.mci.migration.api.DriveAPI;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Migrator;
+import com.sogeti.mci.migration.business.EventMigrator;
 import com.sogeti.mci.migration.dao.SettingsDAO;
 import com.sogeti.mci.migration.model.Member;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
@@ -28,20 +28,20 @@ import com.sogeti.mci.migration.security.CredentialLoader;
 
 public class DriveService 
 {    
-	static Drive drive = Migrator.getDrive();
+	static Drive drive = EventMigrator.getDrive();
  
 	public static File getFolder(String emailId, String name, String parentFolderId) {
 		File file = DriveAPI.getFolder(drive, name, parentFolderId);
 		return file;
 	}
 
-	public static Set<Label> getFoldersByEvent(String emailId, String eventName) {
+	public static Set<Label> getFoldersByEvent(String emailId, String labelRoot) {
     	Gmail gmail = CredentialLoader.getGmailService(emailId);
     	List<Label> list = GmailAPI.getListLabel(gmail, emailId);
     	Set<Label> set = new HashSet<Label>();
     	if (list.size()>0) {
     		for (Label label : list) {
-        		if (label.getName().startsWith(eventName)) {
+        		if (label.getName().startsWith(labelRoot)) {
         			set.add(label);
         		} 
     		}     		
@@ -49,10 +49,10 @@ public class DriveService
     	return set;
     }
     
-    public static HashMap<Label, String> createFolders(Set<Label> set) {
+    public static HashMap<Label, String> createFolders(Set<Label> set, String site, String eventName, String labelRoot) {
     	HashMap<Label,String> map = new HashMap<Label,String>();
     	for (Label elt : set) {
-			String[] folders = elt.getName().split("/");
+			String[] folders = elt.getName().replaceFirst(labelRoot, site+"/"+eventName).split("/");
 			String parentFolderId = null;
 			for (int i = 0; i < folders.length; i++) {
 				String folderName= folders[i];

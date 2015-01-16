@@ -30,7 +30,6 @@ public class CsvService {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-       
       
       return list;
    }
@@ -40,7 +39,7 @@ public class CsvService {
    {
       ColumnPositionMappingStrategy strategy = new ColumnPositionMappingStrategy();
       strategy.setType(Input.class);
-      String[] columns = new String[] {"eventName", "site", "temporaryEventMailbox", "eventType", "leaderName", "teamMembers"};
+      String[] columns = new String[] {"eventName", "eventEmailAddress","site", "temporaryEventMailbox", "eventType", "leaderName", "teamMembers"};
       strategy.setColumnMapping(columns);
       return strategy;
    }	   

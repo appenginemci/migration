@@ -1,18 +1,20 @@
 package com.sogeti.mci.migration.service;
 
+import java.util.List;
+
 import com.google.api.services.admin.directory.Directory;
+import com.google.api.services.admin.directory.model.Alias;
 import com.google.api.services.admin.directory.model.Group;
-import com.google.api.services.admin.directory.model.Groups;
 import com.google.api.services.admin.directory.model.Member;
 import com.google.api.services.admin.directory.model.User;
 import com.sogeti.mci.migration.api.DirectoryAPI;
-import com.sogeti.mci.migration.business.Migrator;
+import com.sogeti.mci.migration.business.EventMigrator;
 import com.sogeti.mci.migration.helper.PropertiesManager;
 
 
 public class DirectoryService {
 	
-	static Directory directory = Migrator.getDirectory();
+	static Directory directory = EventMigrator.getDirectory();
 
 	public static Group insertGroup(String eventName, String mailbox) {
 		Group group = getGroup(mailbox);
@@ -24,8 +26,8 @@ public class DirectoryService {
 
 	public static Group getGroup(String mailbox) {
 		String domain = PropertiesManager.getProperty("domain"); 
-		Groups groups = DirectoryAPI.listGroup(directory, domain);
-		for(Group group : groups.getGroups()) {
+		List<Group> groups = DirectoryAPI.listGroup(directory, domain);
+		for(Group group : groups) {
 			if (group.getEmail().equals(mailbox)) {
 				return group;
 			}
@@ -46,10 +48,24 @@ public class DirectoryService {
 		} 
 		return googleMember;
 	}
-
-
-
-
+	
+	public static Alias addAlias( String account, String aliasName) {
+		Alias alias = getAlias(aliasName);
+		if (alias==null) {
+			alias = DirectoryAPI.addAlias(directory, account, aliasName);
+		}
+		return alias;
+	}
+	
+	public static Alias getAlias(String aliasName) {
+		List<Alias> aliases = DirectoryAPI.getlistAlias(directory,aliasName);
+		for (Alias alias : aliases) {
+			if (alias.getAlias().equals(aliasName)) {
+				return alias;
+			}
+		}
+		return null;
+	}
 	
 
 }

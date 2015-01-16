@@ -12,8 +12,8 @@ public class External {
 		csvFilename = "."+java.io.File.separator+"src"+java.io.File.separator+"main"+java.io.File.separator+"resources"+java.io.File.separator+csvFilename;			      
 		List<Input> inputs = CsvService.getEvents(csvFilename);		
 		for (Input input : inputs) {
-			String[] argv = new String[]{input.getEventName(),input.getSite(),input.getTemporaryEventMailbox(), input.getEventType(), input.getLeaderName(), input.getTeamMembers()};
-			Migrator.main(argv);
+			String[] argv = new String[]{input.getEventName(),input.getEventEmailAddress(),input.getSite(),input.getTemporaryEventMailbox(), input.getEventType(), input.getLeaderName(), input.getTeamMembers()};
+			EventMigrator.main(argv);
 		}
 	}
 }

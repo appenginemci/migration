@@ -3,6 +3,7 @@ package com.sogeti.mci.migration.model;
 public class Input {
 	
 	private String eventName;
+	private String eventEmailAddress;
 	private String site;
 	private String temporaryEventMailbox;
 	private String eventType;
@@ -59,5 +60,11 @@ public class Input {
 	    		  ", leaderName=" + leaderName + 
 	    		  ", teamMembers=" + teamMembers + "]";
 	   }
+	public String getEventEmailAddress() {
+		return eventEmailAddress;
+	}
+	public void setEventEmailAddress(String eventEmailAddress) {
+		this.eventEmailAddress = eventEmailAddress;
+	}
 
 }

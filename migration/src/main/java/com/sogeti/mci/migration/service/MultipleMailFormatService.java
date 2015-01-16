@@ -24,9 +24,8 @@ import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartBody;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Migrator;
+import com.sogeti.mci.migration.business.EventMigrator;
 import com.sogeti.mci.migration.dao.SettingsDAO;
-import com.sogeti.mci.migration.helper.PropertiesManager;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
 import com.sogeti.mci.migration.security.CredentialLoader;
 
@@ -53,7 +52,7 @@ public class MultipleMailFormatService {
 	    String name = retrieveEmailName(mimeMessage);
 	    multipleFormatMail.setNameEmail(name);
 	    
-	    multipleFormatMail.setEvent(EventService.getEventByAccount((Migrator.getInput().getEventName().toLowerCase().replaceAll(" ",".")+"@"+PropertiesManager.getProperty("domain"))));
+	    multipleFormatMail.setEvent(EventService.getEventByAccount((EventMigrator.getInput().getEventEmailAddress())));
 	    	   
 	    multipleFormatMail.setDocument(DocumentService.getDocument(multipleFormatMail));
 	    if (multipleFormatMail.getDocument().getdocumentId() != null) {

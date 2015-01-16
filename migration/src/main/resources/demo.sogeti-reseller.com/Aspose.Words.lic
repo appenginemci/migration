@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<License>
+  <Data>
+    <LicensedTo>sogeti</LicensedTo>
+    <EmailTo>mimoun.chikhi@capgemini-sogeti.com</EmailTo>
+    <LicenseType>Developer Small Business</LicenseType>
+    <LicenseNote>Limited to 1 developer.</LicenseNote>
+    <OrderID>141015070000</OrderID>
+    <UserID>275034</UserID>
+    <OEM>This is not a redistributable license</OEM>
+    <Products>
+      <Product>Aspose.Words for Java</Product>
+    </Products>
+    <EditionType>Enterprise</EditionType>
+    <SerialNumber>c9498765-641b-4adc-a650-65c11cdde22d</SerialNumber>
+    <SubscriptionExpiry>20151015</SubscriptionExpiry>
+    <LicenseExpiry>20141114</LicenseExpiry>
+    <ExpiryNote>This is a temporary license for non-commercial use only and it will expire on 2014-11-14.</ExpiryNote>
+    <LicenseVersion>3.0</LicenseVersion>
+    <LicenseInstructions>http://www.aspose.com/corporate/purchase/license-instructions.aspx</LicenseInstructions>
+  </Data>
+  <Signature>wYSyZyt/af/2AKaf46C+g/mk+5MvwUr/jG67bzGKo+RMjT/rl5zLM9VSB3+tQNap4qDv0G7wQNaQAqLAnbdZYSvmUwwa6AaP12vCZnHWfGzrut/ng8Hn6eSy6B8ku1bVmKXqHzxNLgKUCTtiL84MN1E9R7V8HCK19AhqQFyYuIk=</Signature>
+</License>

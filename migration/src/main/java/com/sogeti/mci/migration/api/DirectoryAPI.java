@@ -1,8 +1,11 @@
 package com.sogeti.mci.migration.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.api.services.admin.directory.Directory;
+import com.google.api.services.admin.directory.model.Alias;
 import com.google.api.services.admin.directory.model.Group;
 import com.google.api.services.admin.directory.model.Groups;
 import com.google.api.services.admin.directory.model.Member;
@@ -24,16 +27,25 @@ public class DirectoryAPI {
 		} 
 		return addedGroup;
 	}
-	
 
-	public static Groups listGroup(Directory directory, String domain) {
+	public static List<Group> listGroup(Directory directory, String domain) {
+		List<Group> listGroup = new ArrayList<Group>();
 		Groups groups = null;
 		try {
 			 groups = directory.groups().list().setDomain(domain).execute();
+			while (groups.getGroups() != null) {
+				listGroup.addAll(groups.getGroups());
+				if (groups.getNextPageToken() != null) {
+					String pageToken = groups.getNextPageToken();
+					groups = directory.groups().list().setDomain(domain).setPageToken(pageToken).execute();
+				} else {
+					break;
+				}
+			}
 		} catch (IOException e) {
 			APIException.handleException(e, "Failed to list group for this domain "+domain, 0);
 		}
-		return groups;
+		return listGroup;
 	}
 	
 	public static User getUser(Directory directory, String userId) {
@@ -64,6 +76,28 @@ public class DirectoryAPI {
 			APIException.handleException(ge, "Failed to add "+userId+" to "+groupId, 404);
 		}
 		return member;
+	}
+
+	public static List<Alias> getlistAlias(Directory directory, String userId) {
+		List<Alias> listAlias = new ArrayList<Alias>();
+		try {
+			listAlias.addAll(directory.users().aliases().list(userId).execute().getAliases());
+		} catch (IOException e) {
+			APIException.handleException(e, "Failed to  for this  ", 0);
+		}
+		return listAlias;
+	}
+	
+	public static Alias addAlias(Directory directory, String account, String alias) {
+		Alias aliasForAdmin = new Alias();
+		aliasForAdmin.setAlias(alias);
+		try {
+			aliasForAdmin =  directory.users().aliases().insert(account, aliasForAdmin).execute();
+		} catch (IOException e) {
+			APIException.handleException(e, "Failed to create alias "+aliasForAdmin, 0);
+			aliasForAdmin = null;
+		}
+		return aliasForAdmin;
 	}
 
 }

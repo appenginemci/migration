@@ -8,7 +8,7 @@ import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.Message;
 import com.sogeti.mci.migration.api.DriveAPI;
 import com.sogeti.mci.migration.api.GmailAPI;
-import com.sogeti.mci.migration.business.Migrator;
+import com.sogeti.mci.migration.business.EventMigrator;
 import com.sogeti.mci.migration.model.Document;
 import com.sogeti.mci.migration.model.MultipleFormatMail;
 import com.sogeti.mci.migration.security.CredentialLoader;
@@ -55,7 +55,7 @@ public class MailManagerService {
 							System.err.println("Failed to labelize message");
 						}
 					} else {
-						if (!deleteFiles(Migrator.getDrive(), multipleFormatMail.getDocument())) {
+						if (!deleteFiles(EventMigrator.getDrive(), multipleFormatMail.getDocument())) {
 							System.err.println("Failed to delete corrupted files");
 							// TODO LOG IN DB
 						}

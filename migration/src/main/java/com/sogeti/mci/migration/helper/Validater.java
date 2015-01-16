@@ -60,40 +60,46 @@ public class Validater {
 			isValid = isValid && StringUtils.isNotEmpty(args[0]);
 					if (isValid) {
 						input.setEventName(args[0]);
-						isValid = isValid && StringUtils.isNotEmpty(args[1]);
-								if (isValid) {
-									input.setSite(args[1]);
-									isValid = isValid && EmailValidator.getInstance().isValid(args[2]);
+						isValid = isValid && EmailValidator.getInstance().isValid(args[1]);
+							if (isValid) {
+								input.setEventEmailAddress(args[1]);
+								isValid = isValid && StringUtils.isNotEmpty(args[2]);
 											if (isValid) {
-												input.setTemporaryEventMailbox(args[2]);
-												isValid = isValid && StringUtils.isNotEmpty(args[3]);
+												input.setSite(args[2]);
+												isValid = isValid && EmailValidator.getInstance().isValid(args[3]);
 														if (isValid) {
-															input.setEventType(args[3]);
-															isValid = isValid && EmailValidator.getInstance().isValid(args[4]);
+															input.setTemporaryEventMailbox(args[3]);
+															isValid = isValid && StringUtils.isNotEmpty(args[4]);
 																	if (isValid) {
-																		input.setLeaderName(args[4]);
-																		String[] tab = args[5].split(",");
-																		for (int i = 0; i < tab.length; i++) {
-																			isValid = isValid && EmailValidator.getInstance().isValid(tab[i]);
-																		}
-																		if (isValid) {
-																			input.setTeamMembers(args[5]);
-																		} else {
-																			System.err.println(args[0]+": Invalid members in "+ args[5]);
-																		}
-																		
+																		input.setEventType(args[4]);
+																		isValid = isValid && EmailValidator.getInstance().isValid(args[5]);
+																				if (isValid) {
+																					input.setLeaderName(args[5]);
+																					String[] tab = args[6].split(",");
+																					for (int i = 0; i < tab.length; i++) {
+																						isValid = isValid && EmailValidator.getInstance().isValid(tab[i]);
+																					}
+																					if (isValid) {
+																						input.setTeamMembers(args[6]);
+																					} else {
+																						System.err.println(args[0]+": Invalid members in "+ args[6]);
+																					}
+																					
+																				} else {
+																					System.err.println(args[0]+": Invalid team leader in "+ args[5]);
+																				}
 																	} else {
-																		System.err.println(args[0]+": Invalid team leader in "+ args[4]);
+																		System.err.println(args[0]+": Invalid type in "+ args[4]);
 																	}
 														} else {
-															System.err.println(args[0]+": Invalid type in "+ args[3]);
+															System.err.println(args[0]+": Invalid temporary mailbox in "+ args[3]);
 														}
 											} else {
-												System.err.println(args[0]+": Invalid applicative account in "+ args[2]);
+												System.err.println(args[0]+": Invalid site in "+ args[2]);
 											}
-								} else {
-									System.err.println(args[0]+": Invalid site in "+ args[1]);
-								}
+							} else {
+								System.err.println(args[0]+": Invalid event email address in "+ args[1]);
+							}
 					} else {
 						System.err.println(" Invalid event in "+ args[0]);
 					}
